@@ -1,17 +1,53 @@
 const { Schema, model } = require('mongoose');
 
-const CommentSchema = new Schema({
-  writtenBy: {
-    type: String,
+const CommentSchema = new Schema(
+  {
+    writtenBy: {
+      type: String,
+    },
+    commentBody: {
+      type: String,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      get: (createdAtVal) => dateFormat(createdAtVal),
+    },
+    replies: [ReplySchema],
   },
-  commentBody: {
-    type: String,
+  {
+    toJSON: {
+      virtuals: true,
+      getters: true,
+    },
+    id: false,
+  }
+);
+
+const ReplySchema = new Schema(
+  {
+    replyId: {
+      type: Schema.Types.ObjectId,
+      default: () => new Types.ObjectsId(),
+    },
+    replyBody: {
+      type: String,
+    },
+    writtenBy: {
+      type: String,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      get: (createdAtVal) => dateFormat(createdAtVal),
+    },
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  {
+    toJSON: {
+      getters: true,
+    },
+  }
+);
 
 const Comment = model('Comment', CommentSchema);
 
